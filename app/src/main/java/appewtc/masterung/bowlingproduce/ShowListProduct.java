@@ -1,18 +1,29 @@
 package appewtc.masterung.bowlingproduce;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ShowListProduct extends AppCompatActivity {
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+
+public class ShowListProduct extends AppCompatActivity implements View.OnClickListener {
 
     //Explicit
     private String categoryString;
     private TextView textView;
     private ListView listView;
     private Button button;
+    private String urlJSONString;
+    private String[] catStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +41,75 @@ public class ShowListProduct extends AppCompatActivity {
         //Show Text
         textView.setText(categoryString);
 
+        //Button Controller
+        button.setOnClickListener(this);
+
+        //Setup urlJSON
+
+        MainActivity mainActivity = new MainActivity();
+        catStrings = mainActivity.getCatStrings();
+
+        if (categoryString.equals(catStrings[0])) {
+            urlJSONString = "http://swiftcodingthai.com/bow/get_product_cat1_master.php";
+        } else if (categoryString.equals(catStrings[1])) {
+            urlJSONString = "http://swiftcodingthai.com/bow/get_product_cat2_master.php";
+        } else if (categoryString.equals(catStrings[2])) {
+            urlJSONString = "http://swiftcodingthai.com/bow/get_product_cat3_master.php";
+        } else {
+            urlJSONString = "http://swiftcodingthai.com/bow/get_product_cat4_master.php";
+        }
+
+        //Create ListView by Data on Server
+        SynProduce synProduce = new SynProduce(this, listView, urlJSONString);
+        synProduce.execute();
+
     }   // Main Method
 
+    private class SynProduce extends AsyncTask<Void, Void, String> {
+
+        //Explicit
+        private Context context;
+        private ListView myListView;
+        private String myUrlJSONString;
+
+        public SynProduce(Context context,
+                          ListView myListView,
+                          String myUrlJSONString) {
+            this.context = context;
+            this.myListView = myListView;
+            this.myUrlJSONString = myUrlJSONString;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            try {
+
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Request.Builder builder = new Request.Builder();
+                Request request = builder.url(myUrlJSONString).build();
+                Response response = okHttpClient.newCall(request).execute();
+                return response.body().string();
+
+            } catch (Exception e) {
+                return null;
+            }
+
+        }   // doInBack
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.d("BowlingV1", "JSON ===> " + s);
+
+        }   // onPost
+
+    }   // SynProduct
+
+
+    @Override
+    public void onClick(View view) {
+        finish();
+    }
 }   // Main Class

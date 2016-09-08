@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             "Category3", "Category4"};
     private String catUserChooseString;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hub4ImageView.setOnClickListener(this);
 
     }   // Main Method
+
+    public String[] getCatStrings() {
+        return catStrings;
+    }
 
     @Override
     public void onClick(View view) {
