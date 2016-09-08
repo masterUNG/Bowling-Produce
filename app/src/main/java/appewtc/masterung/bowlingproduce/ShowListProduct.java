@@ -14,6 +14,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class ShowListProduct extends AppCompatActivity implements View.OnClickListener {
 
@@ -102,6 +105,35 @@ public class ShowListProduct extends AppCompatActivity implements View.OnClickLi
             super.onPostExecute(s);
 
             Log.d("BowlingV1", "JSON ===> " + s);
+
+            try {
+
+                JSONArray jsonArray = new JSONArray(s);
+                String[] titleStrings = new String[jsonArray.length()];
+                String[] descripStrings = new String[jsonArray.length()];
+                String[] descripShortStrings = new String[jsonArray.length()];
+                String[] priceStrings = new String[jsonArray.length()];
+                String[] iconStrings = new String[jsonArray.length()];
+
+                for (int i=0;i<jsonArray.length();i+=1) {
+
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    titleStrings[i] = jsonObject.getString("Product");
+                    descripStrings[i] = jsonObject.getString("Description");
+                    descripShortStrings[i] = descripStrings[i].substring(0, 30) + "...";
+                    priceStrings[i] = jsonObject.getString("Price") + " บาท";
+                    iconStrings[i] = jsonObject.getString("Image");
+
+                }   // for
+
+                ProduceAdapter produceAdapter = new ProduceAdapter(context,
+                        titleStrings, descripShortStrings, priceStrings, iconStrings);
+                myListView.setAdapter(produceAdapter);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
         }   // onPost
 
