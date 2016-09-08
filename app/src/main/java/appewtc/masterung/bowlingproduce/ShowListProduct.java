@@ -1,11 +1,13 @@
 package appewtc.masterung.bowlingproduce;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -109,11 +111,11 @@ public class ShowListProduct extends AppCompatActivity implements View.OnClickLi
             try {
 
                 JSONArray jsonArray = new JSONArray(s);
-                String[] titleStrings = new String[jsonArray.length()];
-                String[] descripStrings = new String[jsonArray.length()];
+                final String[] titleStrings = new String[jsonArray.length()];
+                final String[] descripStrings = new String[jsonArray.length()];
                 String[] descripShortStrings = new String[jsonArray.length()];
-                String[] priceStrings = new String[jsonArray.length()];
-                String[] iconStrings = new String[jsonArray.length()];
+                final String[] priceStrings = new String[jsonArray.length()];
+                final String[] iconStrings = new String[jsonArray.length()];
 
                 for (int i=0;i<jsonArray.length();i+=1) {
 
@@ -129,6 +131,20 @@ public class ShowListProduct extends AppCompatActivity implements View.OnClickLi
                 ProduceAdapter produceAdapter = new ProduceAdapter(context,
                         titleStrings, descripShortStrings, priceStrings, iconStrings);
                 myListView.setAdapter(produceAdapter);
+
+                myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        Intent intent = new Intent(ShowListProduct.this, DetailActivity.class);
+                        intent.putExtra("Title", titleStrings[i]);
+                        intent.putExtra("Icon", iconStrings[i]);
+                        intent.putExtra("Descrip", descripStrings[i]);
+                        intent.putExtra("Price", priceStrings[i]);
+                        startActivity(intent);
+
+                    }   // onItemClick
+                });
 
             } catch (Exception e) {
                 e.printStackTrace();
